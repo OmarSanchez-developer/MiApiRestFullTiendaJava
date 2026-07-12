@@ -1,5 +1,6 @@
 package com.methaporce.tienda.services;
 
+import com.methaporce.tienda.Exceptions.ClienteNotFoundException;
 import com.methaporce.tienda.Repositories.ClienteRepository;
 import com.methaporce.tienda.entidades.Cliente;
 import org.springframework.stereotype.Service;
@@ -33,14 +34,21 @@ public class ClienteServicesImp implements IClienteServices{
             clienteActual.setCiudad(cliente.getCiudad());
             clienteActual.setNombre((cliente.getNombre()));
             return  clienteRepository.save(clienteActual);
+        } else {
+            throw new ClienteNotFoundException("El cliente que intenta modificar no existe");
         }
 
-        return null;
     }
 
     @Override
     public void eliminarCliente(Integer id) {
-       clienteRepository.deleteById(id);
+
+        Cliente clienteExistente = clienteRepository.findById(id).orElse(null);
+        if (clienteExistente != null){
+            clienteRepository.deleteById(id);
+        } else{
+            throw new ClienteNotFoundException("El cliente que intentas eliminar no existe");
+        }
     }
 
 
